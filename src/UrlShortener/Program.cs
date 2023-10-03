@@ -16,11 +16,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     var server = builder.Configuration["DB_SERVER"] ?? "localhost";
     var port = builder.Configuration["DB_PORT"] ?? "1433";
     var user = builder.Configuration["DB_USER"] ?? "sa";
-    var password = builder.Configuration["DB_PASSWORD"] ?? "Password123";
+    var password = builder.Configuration["DB_PASSWORD"] ?? "P@ssword12345";
     var database = builder.Configuration["DB_DATABASE"] ?? "UrlShortener_DB";
 
-    options.UseSqlServer(builder.Configuration.GetConnectionString(
-        $"Server={server},{port};Initial Catalog={database};User ID={user};Password={password};"));
+    options.UseSqlServer($"Server={server},{port};Initial Catalog={database};User ID={user};Password={password};TrustServerCertificate=True;");
 });
 
 builder.Services.AddScoped<UrlShorteningService>();
@@ -50,6 +49,7 @@ app.MapPost("api/shorten", async (
 
     ShortenedUrl shortenedUrl = new()
     {
+        ID = Guid.NewGuid(),
         LongUrl = request.Url,
         ShortUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api/{code}",
         Code = code,
