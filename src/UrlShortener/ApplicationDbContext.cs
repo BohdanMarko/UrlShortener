@@ -19,8 +19,6 @@ public sealed class ApplicationDbContext : DbContext
         {
             builder.Property(x => x.Code).HasMaxLength(UrlShorteningService.ShortLinkCharactersCount);
             builder.HasIndex(x => x.Code).IsUnique();
-
-            builder.Property(x => x.CreatedAtUtc).HasDefaultValue(DateTime.UtcNow);
         });
     }
 }
