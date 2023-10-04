@@ -5,6 +5,7 @@ using UrlShortener.Entities;
 using UrlShortener.Extensions;
 using UrlShortener.Models;
 using UrlShortener.Services;
+using UrlShortener.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,24 +14,16 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    var server = builder.Configuration["DB_SERVER"] ?? "localhost";
-    var port = builder.Configuration["DB_PORT"] ?? "1433";
-    var user = builder.Configuration["DB_USER"] ?? "sa";
-    var password = builder.Configuration["DB_PASSWORD"] ?? "P@ssword12345";
-    var database = builder.Configuration["DB_DATABASE"] ?? "UrlShortener_DB";
-
-    options.UseSqlServer($"Server={server},{port};Initial Catalog={database};User ID={user};Password={password};TrustServerCertificate=True;");
+    var settings = new StorageSettings(builder.Configuration);
+    options.UseSqlServer(settings.GetConnectionString());
 });
 
 builder.Services.AddScoped<UrlShorteningService>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
@@ -71,5 +64,7 @@ app.MapGet("api/{code}", async (string code, ApplicationDbContext dbContext) =>
 
     return Results.Redirect(shortenedUrl.LongUrl, permanent: true);
 });
+
+app.MapGet("api/ping", () => "PONG");
 
 app.Run();

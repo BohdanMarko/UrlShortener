@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+    url-shortener:
+        image: url-shortener-image
+        container_name: url-shortener
+        build:
+            context: .
+            dockerfile: Dockerfile
+        depends_on:
+            - mssql-server
+        ports:
+            - "5000:80"
+        environment:
+            DB_SERVER: "mssql-server"
+            DB_PORT: "1433"
+            DB_USER: "sa"
+            DB_PASSWORD: "P@ssword12345"
+            DB_NAME: "UrlShortener_DB"
+
+    mssql-server:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        container_name: mssql-server
+        environment:
+            MSSQL_SA_PASSWORD: "P@ssword12345"
+            ACCEPT_EULA: "Y"
+        ports:
+            - "1433:1433"
+    

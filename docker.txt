@@ -1,1 +1,5 @@
+Run only Sql Server docker instace:
 docker run --name {your-container-name} -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD={your_password}" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest
+
+Run all services via docker compose:
+docker-compose up
