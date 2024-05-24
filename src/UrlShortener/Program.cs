@@ -12,13 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
 {
-    var settings = new StorageSettings(builder.Configuration);
-    options.UseSqlServer(settings.GetConnectionString());
+    var settings = sp.GetRequiredService<IStorageSettings>();
+    options.UseSqlite(settings.GetConnectionString());
 });
 
 builder.Services.AddScoped<UrlShorteningService>();
+builder.Services.AddScoped<IStorageSettings, SqliteSettings>();
 
 var app = builder.Build();
 
