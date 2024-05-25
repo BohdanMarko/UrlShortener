@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using UrlShortener.Entities;
 using UrlShortener.Services;
@@ -31,6 +32,15 @@ public sealed class IndexModel : PageModel
     {
         if (ModelState.IsValid is false) return;
 
+        var existingRecord = await _dbContext.ShortenedUrls.FirstOrDefaultAsync(x => x.LongUrl.Equals(InputUrl));
+        if (existingRecord is not null)
+        {
+            ShortUrl = existingRecord.ShortUrl;
+            existingRecord.LastUpdatedAtUtc = DateTime.UtcNow;
+            await _dbContext.SaveChangesAsync();
+            return;
+        }
+
         var code = await _service.GenerateUniqueCode();
 
         ShortenedUrl shortenedUrl = new()
@@ -39,7 +49,8 @@ public sealed class IndexModel : PageModel
             LongUrl = InputUrl,
             ShortUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/{code}",
             Code = code,
-            CreatedAtUtc = DateTime.UtcNow
+            CreatedAtUtc = DateTime.UtcNow,
+            LastUpdatedAtUtc = DateTime.UtcNow
         };
 
         ShortUrl = shortenedUrl.ShortUrl;

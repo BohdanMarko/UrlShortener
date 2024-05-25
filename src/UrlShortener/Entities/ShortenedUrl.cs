@@ -11,4 +11,6 @@ public sealed class ShortenedUrl
     public string Code { get; set; } = string.Empty;
 
     public DateTime CreatedAtUtc { get; set; }
+
+    public DateTime LastUpdatedAtUtc { get; set; }
 }
