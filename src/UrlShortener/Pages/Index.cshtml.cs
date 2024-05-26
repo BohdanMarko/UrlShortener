@@ -7,8 +7,6 @@ using UrlShortener.Services;
 
 namespace UrlShortener.Pages;
 
-// TODO: Add input url validation message on UI
-// TODO: Add dockerfile
 // TODO: Maybe add some cache
 // TODO: Test asynchronous code!!!!
 // TODO: Somehow deploy this shit
@@ -32,11 +30,12 @@ public sealed class IndexModel : PageModel
     [BindProperty, Url]
     public string InputUrl { get; set; } = string.Empty;
 
-    public string? ShortUrl { get; set; }
+    public string ShortUrl { get; set; } = string.Empty;
 
-    public async Task OnPostAsync()
+    public async Task<IActionResult> OnPostCreateShortenedUrlAsync()
     {
-        if (ModelState.IsValid is false) return;
+        await Task.Delay(0);
+        if (ModelState.IsValid is false) return Page();
 
         var existingRecord = await _dbContext.ShortenedUrls.FirstOrDefaultAsync(x => x.LongUrl.Equals(InputUrl));
         if (existingRecord is not null)
@@ -44,7 +43,7 @@ public sealed class IndexModel : PageModel
             ShortUrl = existingRecord.ShortUrl;
             existingRecord.LastUpdatedAtUtc = DateTime.UtcNow;
             await _dbContext.SaveChangesAsync();
-            return;
+            return Page();
         }
 
         var code = await _service.GenerateUniqueCode();
@@ -63,5 +62,16 @@ public sealed class IndexModel : PageModel
 
         await _dbContext.ShortenedUrls.AddAsync(shortenedUrl);
         await _dbContext.SaveChangesAsync();
+
+        return Page();
+    }
+
+    public string UniqueCode { get; set; } = string.Empty;
+
+    public async Task<IActionResult> OnPostGenerateUniqueCodeAsync()
+    {
+        UniqueCode = $"Random number: {await _service.GenerateUniqueCode()}";
+        ModelState.Clear();
+        return Page();
     }
 }
