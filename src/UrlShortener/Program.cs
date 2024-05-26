@@ -17,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<UrlShorteningService>();
 builder.Services.AddScoped<IStorageSettings, SqliteSettings>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -29,6 +30,13 @@ app.MapGet("{code}", async (string code, ApplicationDbContext dbContext) =>
     var shortenedUrl = await dbContext.ShortenedUrls.FirstOrDefaultAsync(x => x.Code == code);
     if (shortenedUrl is null) return Results.NotFound();
     return Results.Redirect(shortenedUrl.LongUrl, permanent: true);
+});
+
+app.MapPost("api/refresh", async (ApplicationDbContext dbContext) =>
+{
+    dbContext.ShortenedUrls.RemoveRange(await dbContext.ShortenedUrls.ToListAsync());
+    await dbContext.SaveChangesAsync();
+    return Results.Ok();
 });
 
 app.MapGet("api/ping", () => "PONG");

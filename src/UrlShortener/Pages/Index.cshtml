@@ -95,16 +95,6 @@
             margin-bottom: 10px;
             display: block;
         }
-
-        .generated-code {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: monospace;
-            color: #333;
-        }
     </style>
     <script>
         function copyToClipboard(text) {
@@ -130,16 +120,6 @@
                 <a href="#" onclick="copyToClipboard('@Model.ShortUrl'); return false;">@Model.ShortUrl</a>
             </div>
         }
-
-        <div class="generate-code">
-            <form method="post" asp-page-handler="GenerateUniqueCode">
-                <button type="submit">Generate Unique Code</button>
-            </form>
-            @if (!string.IsNullOrEmpty(Model.UniqueCode))
-            {
-                <div id="uniqueCode" class="generated-code">@Model.UniqueCode</div>
-            }
-        </div>
     </div>
 </body>
 </html>
