@@ -3,3 +3,9 @@ docker run --name {your-container-name} -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD
 
 Run all services via docker compose:
 docker-compose up
+
+steps to start docker container:
+
+1. docker build -t url-shortener:v1 .
+
+2. docker run -p 8080:8080 --name url-shortener-instance url-shortener:v1

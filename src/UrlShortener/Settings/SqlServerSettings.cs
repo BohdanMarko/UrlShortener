@@ -1,10 +1,10 @@
 ﻿namespace UrlShortener.Settings;
 
-public sealed class StorageSettings
+public sealed class SqlServerSettings : IStorageSettings
 {
     private readonly IConfiguration _configuration;
 
-    public StorageSettings(IConfiguration configuration)
+    public SqlServerSettings(IConfiguration configuration)
     {
         _configuration = configuration;
     }
@@ -17,8 +17,8 @@ public sealed class StorageSettings
 
     public string Password => _configuration.GetValue("DB_PASSWORD", "P@ssword12345")!;
 
-    public string Database => _configuration.GetValue("DB_DATABASE", "UrlShortener_DB")!;
+    public string DatabaseName => _configuration.GetValue("DB_DATABASE", "UrlShortenerDB")!;
 
     public string GetConnectionString()
-        => $"Server={Server},{Port};Initial Catalog={Database};User ID={User};Password={Password};TrustServerCertificate=True;";
+        => $"Server={Server},{Port};Initial Catalog={DatabaseName};User ID={User};Password={Password};TrustServerCertificate=True;";
 }
