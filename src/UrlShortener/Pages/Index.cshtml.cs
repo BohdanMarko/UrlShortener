@@ -7,6 +7,12 @@ using UrlShortener.Services;
 
 namespace UrlShortener.Pages;
 
+// TODO: Add input url validation message on UI
+// TODO: Add dockerfile
+// TODO: Maybe add some cache
+// TODO: Test asynchronous code!!!!
+// TODO: Somehow deploy this shit
+
 public sealed class IndexModel : PageModel
 {
     private readonly UrlShorteningService _service;
